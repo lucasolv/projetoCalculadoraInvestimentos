@@ -12,14 +12,18 @@ let progressionChartReference = {}
 
 const columnsArray = [
     {columnLabel: "Mês", accessor: "month"},
-    {columnLabel: "Total investido", accessor: "investedAmount", format: (numberInfo) => formatCurrency(numberInfo)},
-    {columnLabel: "Rendimento mensal", accessor: "interestReturns", format: (numberInfo) => formatCurrency(numberInfo)},
-    {columnLabel: "Rendimento total", accessor: "totalInterestReturns", format: (numberInfo) => formatCurrency(numberInfo)},
-    {columnLabel: "Quantia total", accessor: "totalAmount", format: (numberInfo) => formatCurrency(numberInfo)}
+    {columnLabel: "Total investido", accessor: "investedAmount", format: (numberInfo) => formatCurrencyToTable(numberInfo)},
+    {columnLabel: "Rendimento mensal", accessor: "interestReturns", format: (numberInfo) => formatCurrencyToTable(numberInfo)},
+    {columnLabel: "Rendimento total", accessor: "totalInterestReturns", format: (numberInfo) => formatCurrencyToTable(numberInfo)},
+    {columnLabel: "Quantia total", accessor: "totalAmount", format: (numberInfo) => formatCurrencyToTable(numberInfo)}
 ]
 
-function formatCurrency (value) {
+function formatCurrencyToTable (value) {
     return value.toLocaleString("pt-BR", {style: "currency", currency: "BRL"})
+}
+
+function formatCurrencyToGraph (value) {
+    return value.toFixed(2)
 }
 
 function renderProgression(event){
@@ -30,6 +34,7 @@ function renderProgression(event){
     }
 
     resetCharts()
+    resetTable()
 
     /* const startingAmount = Number(form['starting-amount'].value) */
 
@@ -43,7 +48,7 @@ function renderProgression(event){
 
     const returnsArray = generateReturnsArray(startingAmount, timeAmount, timeAmountPeriod, additionalContribution, returnRate, returnRatePeriod)
 
-    /* const finalInvestmentObject = returnsArray[returnsArray.length - 1]
+    const finalInvestmentObject = returnsArray[returnsArray.length - 1]
 
     doughnutChartReference = new Chart(finalMoneyChart, {
         type: 'doughnut',
@@ -54,7 +59,7 @@ function renderProgression(event){
                 'Imposto'
             ],
             datasets: [{
-                data: [formatCurrency(finalInvestmentObject.investedAmount), formatCurrency(finalInvestmentObject.interestReturns * (1 - taxRate/100)), formatCurrency(finalInvestmentObject.interestReturns * taxRate/100)],
+                data: [formatCurrencyToGraph(finalInvestmentObject.investedAmount), formatCurrencyToGraph(finalInvestmentObject.interestReturns * (1 - taxRate/100)), formatCurrencyToGraph(finalInvestmentObject.interestReturns * taxRate/100)],
                 backgroundColor: [
                     'rgb(255, 99, 132)',
                     'rgb(54, 162, 235)',
@@ -71,12 +76,12 @@ function renderProgression(event){
             labels: returnsArray.map(investmentObject => investmentObject.month),
             datasets: [{
                 label: 'Total investido',
-                data: returnsArray.map(investmentObject => formatCurrency(investmentObject.investedAmount)),
+                data: returnsArray.map(investmentObject => formatCurrencyToGraph(investmentObject.investedAmount)),
                 backgroundColor: 'rgb(255, 99, 132)'
             },
             {
                 label: 'Retorno do investimento',
-                data: returnsArray.map(investmentObject => formatCurrency(investmentObject.interestReturns)),
+                data: returnsArray.map(investmentObject => formatCurrencyToGraph(investmentObject.interestReturns)),
                 backgroundColor: 'rgb(54, 162, 235)'
             }]
         },
@@ -91,7 +96,7 @@ function renderProgression(event){
                 },
             }
         },
-    }) */
+    })
 
     createTable(columnsArray, returnsArray, 'results-table')
 }
@@ -107,6 +112,18 @@ function resetCharts (){
     }
 }
 
+function resetTable() {
+    const tableElement = document.getElementById("results-table");
+    const tableBody = tableElement.querySelector("tbody");
+    if (tableBody) {
+        tableBody.remove();
+    }
+    const tableHeader = tableElement.querySelector("thead");
+    if (tableHeader) {
+        tableHeader.remove();
+    }
+}
+
 function clearForm(){
     for(const formElement of form){
         if(formElement.tagName === 'INPUT' && formElement.hasAttribute('name')){
@@ -119,6 +136,7 @@ function clearForm(){
     }
 
     resetCharts()
+    resetTable()
 }
 
 function validateInput(event){
@@ -144,6 +162,18 @@ for(const formElement of form){
         formElement.addEventListener("blur", validateInput)
     }
 }
+
+const mainEl = document.querySelector('main')
+const carouselEl = document.querySelector('#carousel')
+const nextButton = document.querySelector('#slide-arrow-next')
+const previousButton = document.querySelector('#slide-arrow-previous')
+
+nextButton.addEventListener('click', () => {
+    carouselEl.scrollLeft += mainEl.clientWidth
+})
+previousButton.addEventListener('click', () => {
+    carouselEl.scrollLeft -= mainEl.clientWidth
+})
 
 form.addEventListener("submit", renderProgression)
 /* calculateButton.addEventListener("click", renderProgression) */
