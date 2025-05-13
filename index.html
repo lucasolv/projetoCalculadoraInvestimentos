@@ -58,7 +58,7 @@
         <button class="w-1/2 rounded-lg border-1 border-emerald-800 hover:bg-emerald-800 hover:cursor-pointer hover:text-slate-50" id="clear-form">Limpar</button>
       </div>
     </aside>
-    <main class="row-span-2 col-span-2">
+    <main class="row-span-2 col-span-2 py-1">
       <!-- <section id="charts-container" class="h-full">
         <div class="h-[36%] flex flex-col items-center pb-10">
           <p class="font-bold text-lg">Resultado Final</p>
@@ -69,6 +69,10 @@
           <canvas id="progression"></canvas>
         </div>
       </section> -->
+      <section id="table-container" class="h-full overflow-y-auto">
+        <p class="font-bold text-lg text-center">Resultados Mensais</p>
+        <table id="results-table" class="w-full max-h-full border border-gray-200 border-separate my-1"></table>
+      </section>
     </main>
     <script type="module" src="./main.js"></script>
   </body>

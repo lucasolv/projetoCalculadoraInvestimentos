@@ -1,4 +1,5 @@
 import { generateReturnsArray } from "./src/investmentGoals.js"
+import { createTable } from "./src/table.js"
 import { Chart } from "chart.js/auto"
 
 const form = document.getElementById("investment-form")
@@ -9,8 +10,16 @@ const progressionChart = document.getElementById("progression")
 let doughnutChartReference = {}
 let progressionChartReference = {}
 
+const columnsArray = [
+    {columnLabel: "Mês", accessor: "month"},
+    {columnLabel: "Total investido", accessor: "investedAmount", format: (numberInfo) => formatCurrency(numberInfo)},
+    {columnLabel: "Rendimento mensal", accessor: "interestReturns", format: (numberInfo) => formatCurrency(numberInfo)},
+    {columnLabel: "Rendimento total", accessor: "totalInterestReturns", format: (numberInfo) => formatCurrency(numberInfo)},
+    {columnLabel: "Quantia total", accessor: "totalAmount", format: (numberInfo) => formatCurrency(numberInfo)}
+]
+
 function formatCurrency (value) {
-    return value.toFixed(2)
+    return value.toLocaleString("pt-BR", {style: "currency", currency: "BRL"})
 }
 
 function renderProgression(event){
@@ -34,7 +43,7 @@ function renderProgression(event){
 
     const returnsArray = generateReturnsArray(startingAmount, timeAmount, timeAmountPeriod, additionalContribution, returnRate, returnRatePeriod)
 
-    const finalInvestmentObject = returnsArray[returnsArray.length - 1]
+    /* const finalInvestmentObject = returnsArray[returnsArray.length - 1]
 
     doughnutChartReference = new Chart(finalMoneyChart, {
         type: 'doughnut',
@@ -82,7 +91,9 @@ function renderProgression(event){
                 },
             }
         },
-    })
+    }) */
+
+    createTable(columnsArray, returnsArray, 'results-table')
 }
 
 function isObjectEmpty (obj){
@@ -134,6 +145,6 @@ for(const formElement of form){
     }
 }
 
-/* form.addEventListener("submit", renderProgression) */
+form.addEventListener("submit", renderProgression)
 /* calculateButton.addEventListener("click", renderProgression) */
 clearFormButton.addEventListener("click", clearForm)
